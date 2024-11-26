@@ -1077,7 +1077,7 @@
             },
             {
               "$type": "Models.Surface.ResidueType, Models",
-              "fom_type": "perennialgrain",
+              "fom_type": "intermediatewheatgrass",
               "derived_from": "base_type",
               "fraction_C": 0.0,
               "po4ppm": 0.0,
