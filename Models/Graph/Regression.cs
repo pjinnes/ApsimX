@@ -219,10 +219,10 @@ namespace Models
             double largestAxisScale = Math.Max(maxX, maxY);
 
             return new SeriesDefinition
-                ("1:1 line", Color.Empty,
+                ("1:1 line", Color.RoyalBlue,
                 new double[] { lowestAxisScale, largestAxisScale },
                 new double[] { lowestAxisScale, largestAxisScale },
-                LineType.Dash, MarkerType.None);
+                LineType.Dash, MarkerType.Cross);
         }
 
         /// <summary>Called by the graph presenter to get a list of all annotations to put on the graph.</summary>
