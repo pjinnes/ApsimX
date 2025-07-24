@@ -1,14 +1,11 @@
 using Models.Core;
-using Models.DCAPST.Interfaces;
-using System;
 
 namespace Models.DCAPST
 {
     /// <summary>
     /// Pathway Parameters.
     /// </summary>
-    [Serializable]
-    public class PathwayParameters : IPathwayParameters
+    public class PathwayParameters
     {
         /// <inheritdoc/>
         [Description("Ratio of intercellular CO2 to air CO2")]
@@ -133,12 +130,44 @@ namespace Models.DCAPST
         public TemperatureResponseValues Respiration { get; set; }
 
         /// <summary>
+        /// Maximum Rubisco Activity Params
+        /// </summary>
+        [Description("Maximum Rubisco Activity Params")]
+        [Units("")]
+        [Display(Type = DisplayType.SubModel)]
+        public LeafTemperatureParameters RubiscoActivityParams { get; set; }
+
+        /// <summary>
+        /// Maximum PEPc Activity Params
+        /// </summary>
+        [Description("Maximum PEPc Activity Params")]
+        [Units("")]
+        [Display(Type = DisplayType.SubModel)]
+        public LeafTemperatureParameters PEPcActivityParams { get; set; }
+
+        /// <summary>
         /// Describes how electron transport rate changes with temperature
         /// </summary>
         [Description("Electron transport rate temperature response")]
         [Units("")]
         [Display(Type = DisplayType.SubModel)]
         public LeafTemperatureParameters ElectronTransportRateParams { get; set; }
+
+        /// <summary>
+        /// Maximum Respiration Params
+        /// </summary>
+        [Description("Maximum Respiration Params")]
+        [Units("")]
+        [Display(Type = DisplayType.SubModel)]
+        public LeafTemperatureParameters RespirationParams { get; set; }
+
+        /// <summary>
+        /// Epsilon Params
+        /// </summary>
+        [Description("Epsilon Params")]
+        [Units("")]
+        [Display(Type = DisplayType.SubModel)]
+        public LeafTemperatureParameters EpsilonParams { get; set; }
 
         /// <summary>
         /// Describes how mesophyll CO2 conductance changes with temperature
@@ -148,11 +177,18 @@ namespace Models.DCAPST
         public TemperatureResponseValues MesophyllCO2ConductanceParams { get; set; }
 
         /// <summary>
-        /// Spectral correction factor
+        /// Epsilon
         /// </summary>
-        [Description("Spectral correction factor")]
+        [Description("Epsilon at 25")]
         [Units("")]
-        public double SpectralCorrectionFactor { get; set; }
+        public double EpsilonAt25 { get; set; }
+
+        /// <summary>
+        /// Empirical curvature factor
+        /// </summary>
+        [Description("Empirical curvature factor")]
+        [Units("")]
+        public double CurvatureFactor { get; set; }
 
         /// <summary>
         /// Fraction of photosystem II activity in the bundle sheath

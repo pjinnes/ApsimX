@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using APSIM.Core;
+using APSIM.Numerics;
 using APSIM.Shared.Utilities;
 using Models.Core;
 using Models.Functions;
@@ -15,7 +17,7 @@ using Newtonsoft.Json;
 namespace Models.PMF
 {
 
-    ///<summary> This is a temporary class that will be refactored so the generic biomass/arbutration functionality can be seperatured 
+    ///<summary> This is a temporary class that will be refactored so the generic biomass/arbutration functionality can be seperatured
     ///from the root specific functionality which will then be extracted so root can be represented with the Organ class
     ///</summary>
     [Serializable]
@@ -119,8 +121,6 @@ namespace Models.PMF
         {
             Zones = new List<NetworkZoneState>();
             ZoneNamesToGrowRootsIn = new List<string>();
-            ZoneRootDepths = new List<double>();
-            ZoneInitialDM = new List<NutrientPoolFunctions>();
         }
 
         ///4. Public Events And Enums
@@ -141,10 +141,6 @@ namespace Models.PMF
         /// <summary>The root depths for each addition zone.</summary>
         [JsonIgnore]
         public List<double> ZoneRootDepths { get; set; }
-
-        /// <summary>The live weights for each addition zone.</summary>
-        [JsonIgnore]
-        public List<NutrientPoolFunctions> ZoneInitialDM { get; set; }
 
         /// <summary>A list of all zones to grow roots in</summary>
         [JsonIgnore]
@@ -182,6 +178,24 @@ namespace Models.PMF
         [JsonIgnore]
         public double NTakenUp { get; set; }
 
+        /// <summary>Gets the nitrogen uptake.</summary>
+        [Units("mm")]
+        [JsonIgnore]
+        public double[] NUptakeLayered
+        {
+            get
+            {
+                if (Zones == null || Zones.Count == 0)
+                    return Array.Empty<double>();
+                if (Zones.Count > 1)
+                    throw new Exception(this.Name + " Can't report layered Nuptake for multiple zones as they may not have the same size or number of layers");
+                double[] uptake = new double[Zones[0].Physical.Thickness.Length];
+                if (Zones[0].NitUptake != null)
+                    uptake = Zones[0].NitUptake;
+                return MathUtilities.Multiply_Value(uptake, -1); // convert to positive values.
+            }
+        }
+
         ///<Summary>The speed of root descent</Summary>
         [JsonIgnore]
         public double RootFrontVelocity { get; set; }
@@ -193,7 +207,7 @@ namespace Models.PMF
         /// <summary>Root depth.</summary>
         [JsonIgnore]
         [Units("mm")]
-        public double Depth { 
+        public double Depth {
             get { return PlantZone.Depth; }
             set { PlantZone.Depth = value; }
         }
@@ -201,7 +215,19 @@ namespace Models.PMF
         /// <summary>Root length.</summary>
         [JsonIgnore]
         public double Length { get { return PlantZone.RootLength; } }
+		
+        /// <summary>Water uptake allocated to the root network by the soil arbitrator</summary>
+        public PlantWaterOrNDelta WaterTakenUp { get; set; }
 
+        /// <summary>Nitrogen uptake allocated to this plant by the soil arbitrator</summary>
+        public PlantWaterOrNDelta NitrogenTakenUp { get; set; }
+
+        /// <summary>Water supplied by root network to soil arbitrator for this plant instance</summary>
+        public PlantWaterOrNDelta WaterUptakeSupply { get; set; }
+
+        /// <summary>Nitrogen supplied by the root network to the soil arbitrator for this plant instance</summary>
+        public PlantWaterOrNDelta NitrogenUptakeSupply { get; set; }
+		
         /// <summary>Gets or sets the water uptake.</summary>
         [Units("mm")]
         public double WaterUptake
@@ -480,6 +506,7 @@ namespace Models.PMF
             if (soil == null)
                 throw new Exception("Cannot find soil");
             PlantZone = new NetworkZoneState(parentPlant, soil);
+            ZoneNamesToGrowRootsIn.Add(PlantZone.Name);
 
             soilCrop = soil.FindDescendant<SoilCrop>(parentPlant.Name + "Soil");
             if (soilCrop == null)
@@ -501,13 +528,13 @@ namespace Models.PMF
                     z.CalculateRAw();
                     z.CalculateRelativeLiveBiomassProportions();
                     z.CalculateRelativeDeadBiomassProportions();
+                    z.CalculateRootProportionThroughLayer();
                 }
-                
+
                 double[] KL = soilCrop.KL;
                 for (int layer = 0; layer < Zones[0].Physical.Thickness.Length; layer++)
                 {
                     klByLayer[layer] = KL[layer] * klModifier.Value(layer) * KLModiferDueToDamage(layer);
-                    Zones[0].RootProportions[layer] = SoilUtilities.ProportionThroughLayer(Zones[0].Physical.Thickness, layer, Depth);
                 }
             }
         }
@@ -520,12 +547,20 @@ namespace Models.PMF
             Clear();
             RootFrontVelocity = rootFrontVelocity.Value();
             MaximumRootDepth = maximumRootDepth.Value();
-            
+
             InitialiseZones();
+
+            double TotalArea = 0;
+
             foreach (NetworkZoneState Z in Zones)
             {
-                Z.LayerLive[0] = Initial;
+                TotalArea += Z.Area;
             }
+
+            PartitionBiomassThroughSoil(new OrganNutrientsState(), new OrganNutrientsState(),
+                                             Initial, new OrganNutrientsState(),
+                                             new OrganNutrientsState(),
+                                             new OrganNutrientsState(), new OrganNutrientsState());
         }
 
         /// <summary>
@@ -544,29 +579,35 @@ namespace Models.PMF
                                              OrganNutrientsState liveRemoved, OrganNutrientsState deadRemoved)
         {
             double TotalRAw = 0;
+            double TotalArea = 0;
             foreach (NetworkZoneState Z in Zones)
-                TotalRAw += Z.RAw.Sum();
+            {
+                TotalArea += Z.Area;
+            }
 
             if (parentPlant.IsAlive)
             {
                 double checkTotalWt = 0;
                 double checkTotalN = 0;
+                
                 foreach (NetworkZoneState z in Zones)
                 {
+                    double RZA = z.Area / TotalArea;
+                    TotalRAw = z.RAw.Sum();
                     FOMLayerLayerType[] FOMLayers = new FOMLayerLayerType[z.LayerLive.Length];
                     for (int layer = 0; layer < z.Physical.Thickness.Length; layer++)
                     {
-                        z.LayerLive[layer] = OrganNutrientsState.Subtract(z.LayerLive[layer], OrganNutrientsState.Multiply(liveRemoved, z.LayerLiveProportion[layer], parentOrgan.Cconc), parentOrgan.Cconc);
-                        z.LayerLive[layer] = OrganNutrientsState.Subtract(z.LayerLive[layer], OrganNutrientsState.Multiply(reAllocated, z.LayerLiveProportion[layer], parentOrgan.Cconc), parentOrgan.Cconc);
-                        z.LayerLive[layer] = OrganNutrientsState.Subtract(z.LayerLive[layer], OrganNutrientsState.Multiply(reTranslocated, z.LayerLiveProportion[layer], parentOrgan.Cconc), parentOrgan.Cconc);
-                        z.LayerLive[layer] = OrganNutrientsState.Subtract(z.LayerLive[layer], OrganNutrientsState.Multiply(senesced, z.LayerLiveProportion[layer], parentOrgan.Cconc), parentOrgan.Cconc);
+                        z.LayerLive[layer] -= (liveRemoved * RZA * z.LayerLiveProportion[layer]);
+                        z.LayerLive[layer] -= (reAllocated * RZA * z.LayerLiveProportion[layer]);
+                        z.LayerLive[layer] -= (reTranslocated * RZA * z.LayerLiveProportion[layer]);
+                        z.LayerLive[layer] -= (senesced * RZA * z.LayerLiveProportion[layer]);
                         double fracAlloc = MathUtilities.Divide(z.RAw[layer], TotalRAw, 0);
-                        z.LayerLive[layer] = OrganNutrientsState.Add(z.LayerLive[layer], OrganNutrientsState.Multiply(allocated, fracAlloc, parentOrgan.Cconc), parentOrgan.Cconc);
+                        z.LayerLive[layer] += (allocated * RZA * fracAlloc);
 
-                        z.LayerDead[layer] = OrganNutrientsState.Add(z.LayerDead[layer], OrganNutrientsState.Multiply(senesced, z.LayerLiveProportion[layer], parentOrgan.Cconc), parentOrgan.Cconc);
-                        OrganNutrientsState detachedToday = OrganNutrientsState.Multiply(detached, z.LayerDeadProportion[layer], parentOrgan.Cconc);
-                        z.LayerDead[layer] = OrganNutrientsState.Subtract(z.LayerDead[layer], detachedToday, parentOrgan.Cconc);
-                        z.LayerDead[layer] = OrganNutrientsState.Subtract(z.LayerDead[layer], OrganNutrientsState.Multiply(deadRemoved, z.LayerDeadProportion[layer], parentOrgan.Cconc), parentOrgan.Cconc);
+                        z.LayerDead[layer] += (senesced * RZA * z.LayerLiveProportion[layer]);
+                        OrganNutrientsState detachedToday = detached * RZA * z.LayerDeadProportion[layer];
+                        z.LayerDead[layer] -= detachedToday;
+                        z.LayerDead[layer] -= (deadRemoved * RZA * z.LayerDeadProportion[layer]);
                         checkTotalWt += (z.LayerLive[layer].Wt + z.LayerDead[layer].Wt);
                         checkTotalN += (z.LayerLive[layer].N + z.LayerDead[layer].N);
 
@@ -588,10 +629,10 @@ namespace Models.PMF
                     FomLayer.Layer = FOMLayers;
                     z.nutrient.DoIncorpFOM(FomLayer);
                 }
-               if (Math.Abs(checkTotalWt - parentOrgan.Wt)> 3e-11)
+               if (!MathUtilities.FloatsAreEqual(checkTotalWt, parentOrgan.Wt, Math.Max(checkTotalWt * 1e-10,1e-12)))
                         throw new Exception("C Mass balance error in root profile partitioning");
-                if (Math.Abs(checkTotalN - parentOrgan.N) > 2e-12)
-                    throw new Exception("C Mass balance error in root profile partitioning");
+               if (!MathUtilities.FloatsAreEqual(checkTotalN, parentOrgan.N, Math.Max(checkTotalN * 1e-10,1e-12)))
+                        throw new Exception("C Mass balance error in root profile partitioning");
             }
         }
 
@@ -607,9 +648,9 @@ namespace Models.PMF
                     FOMLayerLayerType[] FOMLayers = new FOMLayerLayerType[z.LayerLive.Length];
                     for (int layer = 0; layer < z.Physical.Thickness.Length; layer++)
                     {
-                        OrganNutrientsState detachedToday = OrganNutrientsState.Add(z.LayerLive[layer], z.LayerDead[layer], parentOrgan.Cconc);
-                        z.LayerDead[layer] = new OrganNutrientsState();
-                        z.LayerLive[layer] = new OrganNutrientsState();
+                        OrganNutrientsState detachedToday = z.LayerLive[layer] + z.LayerDead[layer];
+                        z.LayerDead[layer] = new OrganNutrientsState(parentOrgan.Cconc);
+                        z.LayerLive[layer] = new OrganNutrientsState(parentOrgan.Cconc);
 
                         FOMType fom = new FOMType();
                         fom.amount = (float)(detachedToday.Wt * 10);
@@ -631,34 +672,34 @@ namespace Models.PMF
                 }
             }
         }
-
-
+        
         /// <summary>grow roots in each zone.</summary>
         public void GrowRootDepth()
         {
             foreach (NetworkZoneState z in Zones)
                 z.GrowRootDepth();
         }
+
         /// <summary>Initialise all zones.</summary>
         private void InitialiseZones()
         {
-            PlantZone.Initialize(parentPlant.SowingData.Depth);
-            Zones.Add(PlantZone);
-            if (ZoneRootDepths.Count != ZoneNamesToGrowRootsIn.Count ||
-                ZoneRootDepths.Count != ZoneInitialDM.Count)
-                throw new Exception("The root zone variables (ZoneRootDepths, ZoneNamesToGrowRootsIn, ZoneInitialDM) need to have the same number of values");
-
-            for (int i = 0; i < ZoneNamesToGrowRootsIn.Count; i++)
+            List<double> zoneAreas = new List<double>();
+            foreach (string z in ZoneNamesToGrowRootsIn)
             {
-                Zone zone = this.FindInScope(ZoneNamesToGrowRootsIn[i]) as Zone;
+                Zone zone = this.FindInScope(z) as Zone;
                 if (zone != null)
                 {
                     Soil soil = zone.FindInScope<Soil>();
                     if (soil == null)
                         throw new Exception("Cannot find soil in zone: " + zone.Name);
-                    NetworkZoneState newZone = new NetworkZoneState(parentPlant, soil);
+                    NetworkZoneState newZone = null;
+                    if (z == PlantZone.Name)
+                        newZone = PlantZone;
+                    else
+                        newZone = new NetworkZoneState(parentPlant, soil);
                     newZone.Initialize(parentPlant.SowingData.Depth);
                     Zones.Add(newZone);
+                    zoneAreas.Add(newZone.Area);
                 }
             }
 

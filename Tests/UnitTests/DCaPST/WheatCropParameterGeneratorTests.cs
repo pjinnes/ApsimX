@@ -1,5 +1,4 @@
 ﻿using Models.DCAPST;
-using Models.DCAPST.Interfaces;
 using NUnit.Framework;
 
 namespace UnitTests.DCaPST
@@ -7,109 +6,97 @@ namespace UnitTests.DCaPST
     [TestFixture]
     public class WheatCropParameterGeneratorTests
     {
-        #region TestHelpers
-
-        /// <summary>
-        /// This will create the DCaPSTParameters as per the classic code so that we 
-        /// can compare it to our defaults.
-        /// </summary>
-        /// <returns></returns>
-        private static DCaPSTParameters CreateClassicWheatDcapstParameters()
-        {
-            const double PSI_FACTOR = 1.0;
-
-            var classicCanopy = ClassicDCaPSTDefaultDataSetup.SetUpCanopy(
-                CanopyType.C3, // Canopy type
-                370, // CO2 partial pressure
-                0.7, // Empirical curvature factor
-                0.00000, // Diffusivity-solubility ratio
-                210000, // O2 partial pressure
-                0.78, // PAR diffuse extinction coefficient
-                0.8, // NIR diffuse extinction coefficient
-                0.036, // PAR diffuse reflection coefficient
-                0.389, // NIR diffuse reflection coefficient
-                60, // Leaf angle
-                0.15, // PAR leaf scattering coefficient
-                0.8, // NIR leaf scattering coefficient
-                0.05, // Leaf width
-                1.3, // SLN ratio at canopy top
-                28.6, // Minimum structural nitrogen
-                1.5, // Wind speed
-                1.5 // Wind speed profile distribution coefficient
-            );
-
-            var classicPathway = ClassicDCaPSTDefaultDataSetup.SetUpPathway(
-                0, // Electron transport minimum temperature
-                30.0, // Electron transport optimum temperature
-                45.0, // Electron transport maximum temperature
-                0.911017958600129, // Electron transport scaling constant
-                1, // Electron transport Beta value
-
-                //         0, // Mesophyll conductance minimum temperature
-                //         29.2338417788683, // Mesophyll conductance optimum temperature
-                //         45, // Mesophyll conductance maximum temperature
-                //         0.875790608584141, // Mesophyll conductance scaling constant
-                //         1, // Mesophyll conductance Beta value
-
-                6048.95289, //mesophyll conductance factor
-
-                273.422964228666, // Kc25 - Michaelis Menten constant of Rubisco carboxylation at 25 degrees C
-                93720, // KcFactor
-
-                165824.064155384, // Ko25 - Michaelis Menten constant of Rubisco oxygenation at 25 degrees C
-                33600, // KoFactor
-
-                4.59217066521612, // VcVo25 - Rubisco carboxylation to oxygenation at 25 degrees C
-                35713.19871277176, // VcVoFactor
-
-                0.00000, // Kp25 - Michaelis Menten constant of PEPc activity at 25 degrees C (Unused in C3)
-                0.00000, // KpFactor (Unused in C3)
-
-                65330, // VcFactor
-                46390, // RdFactor
-                0.00000, // VpFactor
-
-                0.00000, // PEPc regeneration (Unused in C3)
-                0.15, // Spectral correction factor
-                0.00000, // Photosystem II activity fraction
-                0.00000, // Bundle sheath CO2 conductance
-                1.45 * PSI_FACTOR, // Max Rubisco activity to SLN ratio
-                2.4 * PSI_FACTOR, // Max electron transport to SLN ratio
-                0.0 * PSI_FACTOR, // Respiration to SLN ratio
-                1.0 * PSI_FACTOR, // Max PEPc activity to SLN ratio
-                0.005 * PSI_FACTOR, // Mesophyll CO2 conductance to SLN ratio
-                0.00000, // Extra ATP cost
-                0.7 // Intercellular CO2 to air CO2 ratio
-            );
-
-            return new DCaPSTParameters
-            {
-                Rpar = 0.5,
-                Canopy = classicCanopy,
-                Pathway = classicPathway
-            };
-        }
-
-        #endregion
-
-        #region Tests
-
         [Test]
-        public void Generate_ReturnsDefaultValues()
+        public void Generate_DefaultParams_ReturnsDefaultsValue()
         {
-            // Arrange
-            var classicWheatParams = CreateClassicWheatDcapstParameters();
-
-            // Act
-            var nextGenWheatParams = WheatCropParameterGenerator.Generate();
-            // Add in any new ones that didn't exist in Classic.
-            classicWheatParams.Canopy.ExtCoeffReductionIntercept = nextGenWheatParams.Canopy.ExtCoeffReductionIntercept;
-            classicWheatParams.Canopy.ExtCoeffReductionSlope = nextGenWheatParams.Canopy.ExtCoeffReductionSlope;
+            // Arrange & Act
+            var cropParams = WheatCropParameterGenerator.Generate();
 
             // Assert
-            DCaPSTParametersComparer.AssertDCaPSTParametersValuesEqual(classicWheatParams, nextGenWheatParams);
-        }
+            Assert.That(cropParams.Rpar, Is.EqualTo(0.5));
+            Assert.That(cropParams.AirO2, Is.EqualTo(210000));
+            Assert.That(cropParams.Windspeed, Is.EqualTo(1.5));
 
-        #endregion
+            Assert.That(cropParams.Canopy.Type, Is.EqualTo(CanopyType.C3));
+            Assert.That(cropParams.Canopy.LeafAngle, Is.EqualTo(60));
+            Assert.That(cropParams.Canopy.LeafWidth, Is.EqualTo(0.05));
+            Assert.That(cropParams.Canopy.LeafScatteringCoeff, Is.EqualTo(0.15));
+            Assert.That(cropParams.Canopy.LeafScatteringCoeffNIR, Is.EqualTo(0.8));
+            Assert.That(cropParams.Canopy.DiffuseExtCoeff, Is.EqualTo(0.78));
+            Assert.That(cropParams.Canopy.ExtCoeffReductionSlope, Is.EqualTo(0.0288));
+            Assert.That(cropParams.Canopy.ExtCoeffReductionIntercept, Is.EqualTo(0.5311));
+            Assert.That(cropParams.Canopy.DiffuseExtCoeffNIR, Is.EqualTo(0.8));
+            Assert.That(cropParams.Canopy.DiffuseReflectionCoeff, Is.EqualTo(0.036));
+            Assert.That(cropParams.Canopy.DiffuseReflectionCoeffNIR, Is.EqualTo(0.389));
+            Assert.That(cropParams.Canopy.WindSpeedExtinction, Is.EqualTo(1.5));
+            Assert.That(cropParams.Canopy.DiffusivitySolubilityRatio, Is.EqualTo(0));
+            Assert.That(cropParams.Canopy.MinimumN, Is.EqualTo(28.6));
+            Assert.That(cropParams.Canopy.SLNRatioTop, Is.EqualTo(1.3));
+
+            Assert.That(cropParams.Pathway.IntercellularToAirCO2Ratio, Is.EqualTo(0.7));
+            Assert.That(cropParams.Pathway.FractionOfCyclicElectronFlow, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.RespirationSLNRatio, Is.EqualTo(0.0));
+            Assert.That(cropParams.Pathway.MaxRubiscoActivitySLNRatio, Is.EqualTo(1.45));
+            Assert.That(cropParams.Pathway.MaxElectronTransportSLNRatio, Is.EqualTo(2.4));
+            Assert.That(cropParams.Pathway.MaxPEPcActivitySLNRatio, Is.EqualTo(1));
+            Assert.That(cropParams.Pathway.MesophyllCO2ConductanceSLNRatio, Is.EqualTo(0.005));
+            Assert.That(cropParams.Pathway.MesophyllElectronTransportFraction, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.ATPProductionElectronTransportFactor, Is.EqualTo(0.75));
+            Assert.That(cropParams.Pathway.ExtraATPCost, Is.EqualTo(0));
+
+            Assert.That(cropParams.Pathway.RespirationParams.TMin, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.RespirationParams.TOpt, Is.EqualTo(38.888));
+            Assert.That(cropParams.Pathway.RespirationParams.TMax, Is.EqualTo(50));
+            Assert.That(cropParams.Pathway.RespirationParams.C, Is.EqualTo(0.626654));
+            Assert.That(cropParams.Pathway.RespirationParams.Beta, Is.EqualTo(0.682));
+
+            Assert.That(cropParams.Pathway.RubiscoActivityParams.TMin, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.RubiscoActivityParams.TOpt, Is.EqualTo(39.241));
+            Assert.That(cropParams.Pathway.RubiscoActivityParams.TMax, Is.EqualTo(50));
+            Assert.That(cropParams.Pathway.RubiscoActivityParams.C, Is.EqualTo(0.744604));
+            Assert.That(cropParams.Pathway.RubiscoActivityParams.Beta, Is.EqualTo(0.396));
+
+            Assert.That(cropParams.Pathway.PEPcActivityParams.TMin, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.PEPcActivityParams.TOpt, Is.EqualTo(45.964));
+            Assert.That(cropParams.Pathway.PEPcActivityParams.TMax, Is.EqualTo(50));
+            Assert.That(cropParams.Pathway.PEPcActivityParams.C, Is.EqualTo(0.304367));
+            Assert.That(cropParams.Pathway.PEPcActivityParams.Beta, Is.EqualTo(0.275));
+
+            Assert.That(cropParams.Pathway.ElectronTransportRateParams.TMin, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.ElectronTransportRateParams.TOpt, Is.EqualTo(30));
+            Assert.That(cropParams.Pathway.ElectronTransportRateParams.TMax, Is.EqualTo(45));
+            Assert.That(cropParams.Pathway.ElectronTransportRateParams.C, Is.EqualTo(0.911017958600129));
+            Assert.That(cropParams.Pathway.ElectronTransportRateParams.Beta, Is.EqualTo(1));
+
+            Assert.That(cropParams.Pathway.RespirationParams.TMin, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.RespirationParams.TOpt, Is.EqualTo(38.888));
+            Assert.That(cropParams.Pathway.RespirationParams.TMax, Is.EqualTo(50));
+            Assert.That(cropParams.Pathway.RespirationParams.C, Is.EqualTo(0.626654));
+            Assert.That(cropParams.Pathway.RespirationParams.Beta, Is.EqualTo(0.682));
+
+            Assert.That(cropParams.Pathway.EpsilonParams.TMin, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.EpsilonParams.TOpt, Is.EqualTo(32.561));
+            Assert.That(cropParams.Pathway.EpsilonParams.TMax, Is.EqualTo(50));
+            Assert.That(cropParams.Pathway.EpsilonParams.C, Is.EqualTo(0.973578));
+            Assert.That(cropParams.Pathway.EpsilonParams.Beta, Is.EqualTo(0.208));
+
+            Assert.That(cropParams.Pathway.RubiscoCarboxylation.At25, Is.EqualTo(273.422964228666));
+            Assert.That(cropParams.Pathway.RubiscoCarboxylation.Factor, Is.EqualTo(93720));
+            Assert.That(cropParams.Pathway.RubiscoOxygenation.At25, Is.EqualTo(165824.064155384));
+            Assert.That(cropParams.Pathway.RubiscoOxygenation.Factor, Is.EqualTo(33600));
+            Assert.That(cropParams.Pathway.RubiscoCarboxylationToOxygenation.At25, Is.EqualTo(4.59217066521612));
+            Assert.That(cropParams.Pathway.RubiscoCarboxylationToOxygenation.Factor, Is.EqualTo(35713.19871277176));
+
+            Assert.That(cropParams.Pathway.PEPc.At25, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.PEPc.Factor, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.RubiscoActivity.At25, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.RubiscoActivity.Factor, Is.EqualTo(65330));
+            Assert.That(cropParams.Pathway.EpsilonAt25, Is.EqualTo(0.2));
+
+            Assert.That(cropParams.Pathway.CurvatureFactor, Is.EqualTo(0.7));
+            Assert.That(cropParams.Pathway.PS2ActivityFraction, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.PEPRegeneration, Is.EqualTo(0));
+            Assert.That(cropParams.Pathway.BundleSheathConductance, Is.EqualTo(0));
+        }
     }
 }
