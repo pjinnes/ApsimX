@@ -5025,8 +5025,8 @@
                 },
                 {
                   "$type": "Models.Functions.Constant, Models",
-                  "FixedValue": 1000000.0,
-                  "Units": null,
+                  "FixedValue": 200.0,
+                  "Units": "cm",
                   "Name": "MaximumRootDepth",
                   "ResourceName": null,
                   "Children": [],
@@ -5156,7 +5156,7 @@
                           "Children": [
                             {
                               "$type": "Models.Functions.Constant, Models",
-                              "FixedValue": 20.0,
+                              "FixedValue": 30.0,
                               "Units": "mm/d",
                               "Name": "Value",
                               "ResourceName": null,
@@ -5182,9 +5182,9 @@
                           "$type": "Models.Functions.XYPairs, Models",
                           "X": [
                             0.0,
-                            15.0,
-                            25.0,
-                            35.0
+                            10.0,
+                            20.0,
+                            30.0
                           ],
                           "Y": [
                             0.0,
@@ -75008,6 +75008,68 @@
                                 null
                               ],
                               "Name": "IntermediateWheatgrassSoil",
+                              "ResourceName": null,
+                              "Children": [],
+                              "Enabled": true,
+                              "ReadOnly": false
+                            },
+                            {
+                              "$type": "Models.Soils.SoilCrop, Models",
+                              "LL": [
+                                0.124,
+                                0.148,
+                                0.153,
+                                0.153,
+                                0.153,
+                                0.153,
+                                0.153
+                              ],
+                              "KL": [
+                                0.06,
+                                0.06,
+                                0.06,
+                                0.06,
+                                0.06,
+                                0.06,
+                                0.06
+                              ],
+                              "XF": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                              ],
+                              "LLMetadata": [
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated"
+                              ],
+                              "KLMetadata": [
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated"
+                              ],
+                              "XFMetadata": [
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated",
+                                "Calculated"
+                              ],
+                              "Name": "SoilCrop",
                               "ResourceName": null,
                               "Children": [],
                               "Enabled": true,
