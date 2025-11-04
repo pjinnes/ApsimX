@@ -65,7 +65,7 @@
                             35.0,
                             50.0,
                             70.0,
-                            90.0
+                            92.0
                           ],
                           "Name": "XYPairs",
                           "ResourceName": null,
@@ -83,117 +83,6 @@
                           "ReadOnly": false
                         }
                       ],
-                      "Enabled": true,
-                      "ReadOnly": false
-                    }
-                  ],
-                  "Enabled": true,
-                  "ReadOnly": false
-                },
-                {
-                  "$type": "Models.PMF.Phen.Vernalisation, Models",
-                  "StartStage": "Emergence",
-                  "EndStage": "Induction",
-                  "ResetStage": "Ripening",
-                  "Name": "Vernalisation",
-                  "ResourceName": null,
-                  "Children": [
-                    {
-                      "$type": "Models.Memo, Models",
-                      "Text": null,
-                      "Name": "Description",
-                      "ResourceName": null,
-                      "Children": [],
-                      "Enabled": true,
-                      "ReadOnly": false
-                    },
-                    {
-                      "$type": "Models.Functions.SubDailyInterpolation, Models",
-                      "agregationMethod": 0,
-                      "Name": "VernalisingDays",
-                      "ResourceName": null,
-                      "Children": [
-                        {
-                          "$type": "Models.Functions.XYPairs, Models",
-                          "X": [
-                            0.0,
-                            5.0,
-                            5.5,
-                            6.0,
-                            7.0
-                          ],
-                          "Y": [
-                            1.0,
-                            1.0,
-                            1.0,
-                            0.5,
-                            0.0
-                          ],
-                          "Name": "Response",
-                          "ResourceName": null,
-                          "Children": [],
-                          "Enabled": true,
-                          "ReadOnly": false
-                        },
-                        {
-                          "$type": "Models.Functions.ThreeHourAirTemperature, Models",
-                          "TempRangeFactors": null,
-                          "Name": "InterpolationMethod",
-                          "ResourceName": null,
-                          "Children": [],
-                          "Enabled": true,
-                          "ReadOnly": false
-                        }
-                      ],
-                      "Enabled": true,
-                      "ReadOnly": false
-                    },
-                    {
-                      "$type": "Models.Functions.SubDailyInterpolation, Models",
-                      "agregationMethod": 0,
-                      "Name": "DevernalisingDays",
-                      "ResourceName": null,
-                      "Children": [
-                        {
-                          "$type": "Models.Functions.XYPairs, Models",
-                          "X": [
-                            0.0,
-                            15.0,
-                            35.0,
-                            40.0
-                          ],
-                          "Y": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                          ],
-                          "Name": "Response",
-                          "ResourceName": null,
-                          "Children": [],
-                          "Enabled": true,
-                          "ReadOnly": false
-                        },
-                        {
-                          "$type": "Models.Functions.ThreeHourAirTemperature, Models",
-                          "TempRangeFactors": null,
-                          "Name": "InterpolationMethod",
-                          "ResourceName": null,
-                          "Children": [],
-                          "Enabled": true,
-                          "ReadOnly": false
-                        }
-                      ],
-                      "Enabled": true,
-                      "ReadOnly": false
-                    },
-                    {
-                      "$type": "Models.Functions.Constant, Models",
-                      "FixedValue": 35.0,
-                      "Units": "days",
-                      "Name": "DaysToStabilise",
-                      "ResourceName": null,
-                      "Children": [],
                       "Enabled": true,
                       "ReadOnly": false
                     }
@@ -270,7 +159,7 @@
                       "Name": "Description",
                       "ResourceName": null,
                       "Children": [],
-                      "Enabled": true,
+                      "Enabled": false,
                       "ReadOnly": false
                     },
                     {
@@ -290,7 +179,7 @@
                       "Name": "Response",
                       "ResourceName": null,
                       "Children": [],
-                      "Enabled": true,
+                      "Enabled": false,
                       "ReadOnly": false
                     },
                     {
@@ -299,7 +188,7 @@
                       "Name": "InterpolationMethod",
                       "ResourceName": null,
                       "Children": [],
-                      "Enabled": true,
+                      "Enabled": false,
                       "ReadOnly": false
                     },
                     {
@@ -309,11 +198,11 @@
                       "Name": "ThermalStressThreshold",
                       "ResourceName": null,
                       "Children": [],
-                      "Enabled": true,
+                      "Enabled": false,
                       "ReadOnly": false
                     }
                   ],
-                  "Enabled": true,
+                  "Enabled": false,
                   "ReadOnly": false
                 },
                 {
@@ -352,6 +241,113 @@
                   "Name": "PhotoperiodVariation",
                   "ResourceName": null,
                   "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.PMF.Phen.Vernalisation, Models",
+                  "StartStage": "Emergence",
+                  "EndStage": "Induction",
+                  "ResetStage": "Induction",
+                  "Name": "Vernalisation",
+                  "ResourceName": null,
+                  "Children": [
+                    {
+                      "$type": "Models.Memo, Models",
+                      "Text": "",
+                      "Name": "Description",
+                      "ResourceName": null,
+                      "Children": [],
+                      "Enabled": true,
+                      "ReadOnly": false
+                    },
+                    {
+                      "$type": "Models.Functions.SubDailyInterpolation, Models",
+                      "agregationMethod": 0,
+                      "Name": "VernalisingDays",
+                      "ResourceName": null,
+                      "Children": [
+                        {
+                          "$type": "Models.Functions.XYPairs, Models",
+                          "X": [
+                            0.0,
+                            6.0,
+                            8.0
+                          ],
+                          "Y": [
+                            3.0,
+                            3.0,
+                            0.0
+                          ],
+                          "Name": "Response",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": true,
+                          "ReadOnly": false
+                        },
+                        {
+                          "$type": "Models.Functions.ThreeHourAirTemperature, Models",
+                          "TempRangeFactors": null,
+                          "Name": "InterpolationMethod",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": true,
+                          "ReadOnly": false
+                        }
+                      ],
+                      "Enabled": true,
+                      "ReadOnly": false
+                    },
+                    {
+                      "$type": "Models.Functions.SubDailyInterpolation, Models",
+                      "agregationMethod": 0,
+                      "Name": "DevernalisingDays",
+                      "ResourceName": null,
+                      "Children": [
+                        {
+                          "$type": "Models.Functions.XYPairs, Models",
+                          "X": [
+                            0.0,
+                            15.0,
+                            35.0,
+                            40.0
+                          ],
+                          "Y": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                          ],
+                          "Name": "Response",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": true,
+                          "ReadOnly": false
+                        },
+                        {
+                          "$type": "Models.Functions.ThreeHourAirTemperature, Models",
+                          "TempRangeFactors": null,
+                          "Name": "InterpolationMethod",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": true,
+                          "ReadOnly": false
+                        }
+                      ],
+                      "Enabled": true,
+                      "ReadOnly": false
+                    },
+                    {
+                      "$type": "Models.Functions.Constant, Models",
+                      "FixedValue": 35.0,
+                      "Units": "days",
+                      "Name": "DaysToStabilise",
+                      "ResourceName": null,
+                      "Children": [],
+                      "Enabled": true,
+                      "ReadOnly": false
+                    }
+                  ],
                   "Enabled": true,
                   "ReadOnly": false
                 },
@@ -468,6 +464,64 @@
                       ],
                       "Enabled": true,
                       "ReadOnly": false
+                    },
+                    {
+                      "$type": "Models.Functions.SubDailyInterpolation, Models",
+                      "agregationMethod": 0,
+                      "Name": "ThermalStress",
+                      "ResourceName": null,
+                      "Children": [
+                        {
+                          "$type": "Models.Memo, Models",
+                          "Text": "The thermal time is used to control many of the phenological changes in perennial grain.  It is calculated using the daily average temperature and three parameters, or cardinal temperatures: minimum, maximum, and optimum.  Plant development accelerates as temperature increases from minimum to optimum and slows down after that, ceasing completely at maximum temperature.\r\n",
+                          "Name": "Description",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": false,
+                          "ReadOnly": false
+                        },
+                        {
+                          "$type": "Models.Functions.XYPairs, Models",
+                          "X": [
+                            0.0,
+                            24.0,
+                            30.0,
+                            40.0
+                          ],
+                          "Y": [
+                            0.0,
+                            0.0,
+                            3.0,
+                            10.0
+                          ],
+                          "Name": "Response",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": false,
+                          "ReadOnly": false
+                        },
+                        {
+                          "$type": "Models.Functions.ThreeHourAirTemperature, Models",
+                          "TempRangeFactors": null,
+                          "Name": "InterpolationMethod",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": false,
+                          "ReadOnly": false
+                        },
+                        {
+                          "$type": "Models.Functions.Constant, Models",
+                          "FixedValue": 68.0,
+                          "Units": null,
+                          "Name": "ThermalStressThreshold",
+                          "ResourceName": null,
+                          "Children": [],
+                          "Enabled": false,
+                          "ReadOnly": false
+                        }
+                      ],
+                      "Enabled": false,
+                      "ReadOnly": false
                     }
                   ],
                   "Enabled": true,
@@ -492,8 +546,8 @@
                     },
                     {
                       "$type": "Models.Functions.Constant, Models",
-                      "FixedValue": 8.0,
-                      "Units": "oCd",
+                      "FixedValue": 49.0,
+                      "Units": "days",
                       "Name": "Target",
                       "ResourceName": null,
                       "Children": [],
@@ -532,7 +586,7 @@
                     },
                     {
                       "$type": "Models.Functions.Constant, Models",
-                      "FixedValue": 13.0,
+                      "FixedValue": 10.0,
                       "Units": "days",
                       "Name": "Target",
                       "ResourceName": null,
@@ -7030,51 +7084,6 @@
                   "ReadOnly": false
                 },
                 {
-                  "$type": "Models.Report, Models",
-                  "VariableNames": [
-                    "[Clock].Today as Date",
-                    "",
-                    "[IntermediateWheatgrass].Population",
-                    "[IntermediateWheatgrass].PlantType",
-                    "[IntermediateWheatgrass].Leaf.RadiationIntercepted as InterceptedRadiation",
-                    "",
-                    "[IntermediateWheatgrass].AboveGround.Wt*10 as totalBiomass",
-                    "[IntermediateWheatgrass].BelowGround.Wt*10 as Roots",
-                    "[IntermediateWheatgrass].Leaf.Live.NConc",
-                    "[IntermediateWheatgrass].Leaf.LAI*100",
-                    "[IntermediateWheatgrass].Leaf.Live.Wt*10 as LeavesWeight",
-                    "[IntermediateWheatgrass].Stem.Live.Wt*10 as StemsWeight",
-                    "[IntermediateWheatgrass].Spike.Live.Wt*10 as SpikesWeight",
-                    "[IntermediateWheatgrass].Grain.Live.Wt*10 as GrainWeight",
-                    "[IntermediateWheatgrass].Root.Live.Wt*10 as RootsWeight",
-                    "[IntermediateWheatgrass].Leaf.Senesced.Wt*10 as LeavesDeadWeight",
-                    "[IntermediateWheatgrass].Stem.Senesced.Wt*10 as StemsDeadWeight",
-                    "[IntermediateWheatgrass].Spike.Senesced.Wt*10 as SpikesDeadWeight",
-                    "",
-                    "[IntermediateWheatgrass].Phenology.CurrentStageName",
-                    "[IntermediateWheatgrass].Phenology.CurrentPhaseName",
-                    "[IntermediateWheatgrass].Phenology.Stage",
-                    "[Phenology].Vernalisation.TodaysVernalisation*100",
-                    "LeavesWeight+LeavesDeadWeight+StemsWeight+StemsDeadWeight+SpikesWeight+SpikesDeadWeight+GrainWeight as AboveGndBiomass",
-                    "[Phenology].StageToZadok",
-                    "[IntermediateWheatgrass].Phenology.AccumulatedTT",
-                    "[IntermediateWheatgrass].Phenology.ThermalStress",
-                    "[Leaf].Fw",
-                    "[Leaf].Fn",
-                    "[Phenology].Reproductive.Progression",
-                    "[Phenology].ThermalTime"
-                  ],
-                  "EventNames": [
-                    "[Clock].EndOfDay"
-                  ],
-                  "GroupByVariableName": null,
-                  "Name": "Report",
-                  "ResourceName": null,
-                  "Children": [],
-                  "Enabled": true,
-                  "ReadOnly": false
-                },
-                {
                   "$type": "Models.Operations, Models",
                   "OperationsList": [
                     {
@@ -8213,6 +8222,54 @@
                       "ReadOnly": false
                     }
                   ],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Report, Models",
+                  "VariableNames": [
+                    "[Clock].Today as Date",
+                    "",
+                    "[IntermediateWheatgrass].Population",
+                    "[IntermediateWheatgrass].PlantType",
+                    "[IntermediateWheatgrass].Leaf.RadiationIntercepted as InterceptedRadiation",
+                    "",
+                    "[IntermediateWheatgrass].AboveGround.Wt*10 as totalBiomass",
+                    "[IntermediateWheatgrass].BelowGround.Wt*10 as Roots",
+                    "[IntermediateWheatgrass].Leaf.Live.NConc",
+                    "[IntermediateWheatgrass].Leaf.LAI*100",
+                    "[IntermediateWheatgrass].Leaf.Live.Wt*10 as LeavesWeight",
+                    "[IntermediateWheatgrass].Stem.Live.Wt*10 as StemsWeight",
+                    "[IntermediateWheatgrass].Spike.Live.Wt*10 as SpikesWeight",
+                    "[IntermediateWheatgrass].Grain.Live.Wt*10 as GrainWeight",
+                    "[IntermediateWheatgrass].Root.Live.Wt*10 as RootsWeight",
+                    "[IntermediateWheatgrass].Leaf.Senesced.Wt*10 as LeavesDeadWeight",
+                    "[IntermediateWheatgrass].Stem.Senesced.Wt*10 as StemsDeadWeight",
+                    "[IntermediateWheatgrass].Spike.Senesced.Wt*10 as SpikesDeadWeight",
+                    "",
+                    "[IntermediateWheatgrass].Phenology.CurrentStageName",
+                    "[IntermediateWheatgrass].Phenology.CurrentPhaseName",
+                    "[IntermediateWheatgrass].Phenology.Stage",
+                    "[IntermediateWheatgrass].Phenology.Photoperiod",
+                    "[Phenology].Vernalisation.TodaysVernalisation*100",
+                    "[Phenology].Vernalisation.VernalisingDays",
+                    "[Phenology].Vernalisation.DaysVernalised",
+                    "LeavesWeight+LeavesDeadWeight+StemsWeight+StemsDeadWeight+SpikesWeight+SpikesDeadWeight+GrainWeight as AboveGndBiomass",
+                    "[Phenology].StageToZadok",
+                    "[IntermediateWheatgrass].Phenology.AccumulatedTT",
+                    "[IntermediateWheatgrass].Phenology.ThermalStress",
+                    "[Leaf].Fw",
+                    "[Leaf].Fn",
+                    "[Phenology].Reproductive.Progression",
+                    "[Phenology].ThermalTime"
+                  ],
+                  "EventNames": [
+                    "[Clock].EndOfDay"
+                  ],
+                  "GroupByVariableName": null,
+                  "Name": "Report",
+                  "ResourceName": null,
+                  "Children": [],
                   "Enabled": true,
                   "ReadOnly": false
                 }
@@ -9446,6 +9503,172 @@
               ],
               "Enabled": true,
               "ReadOnly": false
+            },
+            {
+              "$type": "Models.Graph, Models",
+              "Caption": null,
+              "Axis": [
+                {
+                  "$type": "APSIM.Shared.Graphing.Axis, APSIM.Shared",
+                  "Title": "Date",
+                  "Position": 3,
+                  "Inverted": false,
+                  "CrossesAtZero": false,
+                  "LabelOnOneLine": false,
+                  "Minimum": null,
+                  "Maximum": null,
+                  "Interval": null
+                },
+                {
+                  "$type": "APSIM.Shared.Graphing.Axis, APSIM.Shared",
+                  "Title": null,
+                  "Position": 0,
+                  "Inverted": false,
+                  "CrossesAtZero": false,
+                  "LabelOnOneLine": false,
+                  "Minimum": null,
+                  "Maximum": null,
+                  "Interval": null
+                },
+                {
+                  "$type": "APSIM.Shared.Graphing.Axis, APSIM.Shared",
+                  "Title": "Phenology.Vernalisation.VernalisingDays",
+                  "Position": 2,
+                  "Inverted": false,
+                  "CrossesAtZero": false,
+                  "LabelOnOneLine": false,
+                  "Minimum": null,
+                  "Maximum": null,
+                  "Interval": null
+                }
+              ],
+              "LegendPosition": 0,
+              "LegendOrientation": 0,
+              "AnnotationLocation": 0,
+              "DisabledSeries": [],
+              "LegendOutsideGraph": false,
+              "Name": "Vernalisation",
+              "ResourceName": null,
+              "Children": [
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 0,
+                  "ColourArgb": -16747854,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "Phenology.Vernalisation.TodaysVernalisation*100",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "Vernalisationx100",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 0,
+                  "ColourArgb": -2793984,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "Phenology.StageToZadok",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "Zadoks",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 2,
+                  "ColourArgb": -16777216,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "Phenology.Vernalisation.DaysVernalised",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "VernalisationDays",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 2,
+                  "ColourArgb": -3376729,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "IntermediateWheatgrass.Phenology.Photoperiod",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "DayLength",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                }
+              ],
+              "Enabled": true,
+              "ReadOnly": false
             }
           ],
           "Enabled": true,
@@ -9675,51 +9898,6 @@
                     }
                   ],
                   "Name": "Sowing",
-                  "ResourceName": null,
-                  "Children": [],
-                  "Enabled": true,
-                  "ReadOnly": false
-                },
-                {
-                  "$type": "Models.Report, Models",
-                  "VariableNames": [
-                    "[Clock].Today as Date",
-                    "",
-                    "[IntermediateWheatgrass].Population",
-                    "[IntermediateWheatgrass].PlantType",
-                    "[IntermediateWheatgrass].Leaf.RadiationIntercepted as InterceptedRadiation",
-                    "",
-                    "[IntermediateWheatgrass].AboveGround.Wt*10 as totalBiomass",
-                    "[IntermediateWheatgrass].BelowGround.Wt*10 as Roots",
-                    "[IntermediateWheatgrass].Leaf.Live.NConc",
-                    "[IntermediateWheatgrass].Leaf.LAI*100",
-                    "[IntermediateWheatgrass].Leaf.Live.Wt*10 as LeavesWeight",
-                    "[IntermediateWheatgrass].Stem.Live.Wt*10 as StemsWeight",
-                    "[IntermediateWheatgrass].Spike.Live.Wt*10 as SpikesWeight",
-                    "[IntermediateWheatgrass].Grain.Live.Wt*10 as GrainWeight",
-                    "[IntermediateWheatgrass].Root.Live.Wt*10 as RootsWeight",
-                    "[IntermediateWheatgrass].Leaf.Senesced.Wt*10 as LeavesDeadWeight",
-                    "[IntermediateWheatgrass].Stem.Senesced.Wt*10 as StemsDeadWeight",
-                    "[IntermediateWheatgrass].Spike.Senesced.Wt*10 as SpikesDeadWeight",
-                    "",
-                    "[IntermediateWheatgrass].Phenology.CurrentStageName",
-                    "[IntermediateWheatgrass].Phenology.CurrentPhaseName",
-                    "[IntermediateWheatgrass].Phenology.Stage",
-                    "[Phenology].Vernalisation.TodaysVernalisation*100",
-                    "LeavesWeight+LeavesDeadWeight+StemsWeight+StemsDeadWeight+SpikesWeight+SpikesDeadWeight+GrainWeight as AboveGndBiomass",
-                    "[Phenology].StageToZadok",
-                    "[IntermediateWheatgrass].Phenology.AccumulatedTT",
-                    "[IntermediateWheatgrass].Phenology.ThermalStress",
-                    "[Leaf].Fw",
-                    "[Leaf].Fn",
-                    "[Phenology].Reproductive.Progression",
-                    "[Phenology].ThermalTime"
-                  ],
-                  "EventNames": [
-                    "[Clock].EndOfDay"
-                  ],
-                  "GroupByVariableName": null,
-                  "Name": "Report",
                   "ResourceName": null,
                   "Children": [],
                   "Enabled": true,
@@ -10908,6 +11086,53 @@
                   ],
                   "Enabled": true,
                   "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Report, Models",
+                  "VariableNames": [
+                    "[Clock].Today as Date",
+                    "",
+                    "[IntermediateWheatgrass].Population",
+                    "[IntermediateWheatgrass].PlantType",
+                    "[IntermediateWheatgrass].Leaf.RadiationIntercepted as InterceptedRadiation",
+                    "",
+                    "[IntermediateWheatgrass].AboveGround.Wt*10 as totalBiomass",
+                    "[IntermediateWheatgrass].BelowGround.Wt*10 as Roots",
+                    "[IntermediateWheatgrass].Leaf.Live.NConc",
+                    "[IntermediateWheatgrass].Leaf.LAI*100",
+                    "[IntermediateWheatgrass].Leaf.Live.Wt*10 as LeavesWeight",
+                    "[IntermediateWheatgrass].Stem.Live.Wt*10 as StemsWeight",
+                    "[IntermediateWheatgrass].Spike.Live.Wt*10 as SpikesWeight",
+                    "[IntermediateWheatgrass].Grain.Live.Wt*10 as GrainWeight",
+                    "[IntermediateWheatgrass].Root.Live.Wt*10 as RootsWeight",
+                    "[IntermediateWheatgrass].Leaf.Senesced.Wt*10 as LeavesDeadWeight",
+                    "[IntermediateWheatgrass].Stem.Senesced.Wt*10 as StemsDeadWeight",
+                    "[IntermediateWheatgrass].Spike.Senesced.Wt*10 as SpikesDeadWeight",
+                    "",
+                    "[IntermediateWheatgrass].Phenology.CurrentStageName",
+                    "[IntermediateWheatgrass].Phenology.CurrentPhaseName",
+                    "[IntermediateWheatgrass].Phenology.Stage",
+                    "[Phenology].Vernalisation.TodaysVernalisation*100",
+                    "[Phenology].Vernalisation.VernalisingDays",
+                    "[Phenology].Vernalisation.DaysVernalised",
+                    "LeavesWeight+LeavesDeadWeight+StemsWeight+StemsDeadWeight+SpikesWeight+SpikesDeadWeight+GrainWeight as AboveGndBiomass",
+                    "[Phenology].StageToZadok",
+                    "[IntermediateWheatgrass].Phenology.AccumulatedTT",
+                    "[IntermediateWheatgrass].Phenology.ThermalStress",
+                    "[Leaf].Fw",
+                    "[Leaf].Fn",
+                    "[Phenology].Reproductive.Progression",
+                    "[Phenology].ThermalTime"
+                  ],
+                  "EventNames": [
+                    "[Clock].EndOfDay"
+                  ],
+                  "GroupByVariableName": null,
+                  "Name": "Report",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
                 }
               ],
               "Enabled": true,
@@ -12044,6 +12269,172 @@
                   "CumulativeX": false,
                   "Filter": null,
                   "Name": "Predicted Grain kg-ha",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                }
+              ],
+              "Enabled": true,
+              "ReadOnly": false
+            },
+            {
+              "$type": "Models.Graph, Models",
+              "Caption": null,
+              "Axis": [
+                {
+                  "$type": "APSIM.Shared.Graphing.Axis, APSIM.Shared",
+                  "Title": "Date",
+                  "Position": 3,
+                  "Inverted": false,
+                  "CrossesAtZero": false,
+                  "LabelOnOneLine": false,
+                  "Minimum": null,
+                  "Maximum": null,
+                  "Interval": null
+                },
+                {
+                  "$type": "APSIM.Shared.Graphing.Axis, APSIM.Shared",
+                  "Title": null,
+                  "Position": 0,
+                  "Inverted": false,
+                  "CrossesAtZero": false,
+                  "LabelOnOneLine": false,
+                  "Minimum": null,
+                  "Maximum": null,
+                  "Interval": null
+                },
+                {
+                  "$type": "APSIM.Shared.Graphing.Axis, APSIM.Shared",
+                  "Title": "Phenology.Vernalisation.VernalisingDays",
+                  "Position": 2,
+                  "Inverted": false,
+                  "CrossesAtZero": false,
+                  "LabelOnOneLine": false,
+                  "Minimum": null,
+                  "Maximum": null,
+                  "Interval": null
+                }
+              ],
+              "LegendPosition": 0,
+              "LegendOrientation": 0,
+              "AnnotationLocation": 0,
+              "DisabledSeries": [],
+              "LegendOutsideGraph": false,
+              "Name": "Vernalisation",
+              "ResourceName": null,
+              "Children": [
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 0,
+                  "ColourArgb": -16747854,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "Phenology.Vernalisation.TodaysVernalisation*100",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "Vernalisationx100",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 0,
+                  "ColourArgb": -2793984,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "Phenology.StageToZadok",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "Zadoks",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 0,
+                  "ColourArgb": -16777216,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "Phenology.Vernalisation.DaysVernalised",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "VernalisationDays",
+                  "ResourceName": null,
+                  "Children": [],
+                  "Enabled": true,
+                  "ReadOnly": false
+                },
+                {
+                  "$type": "Models.Series, Models",
+                  "Type": 1,
+                  "XAxis": 3,
+                  "YAxis": 2,
+                  "ColourArgb": -16736653,
+                  "FactorToVaryColours": null,
+                  "FactorToVaryMarkers": null,
+                  "FactorToVaryLines": null,
+                  "Marker": 11,
+                  "MarkerSize": 0,
+                  "Line": 0,
+                  "LineThickness": 0,
+                  "TableName": "Report",
+                  "XFieldName": "Date",
+                  "YFieldName": "IntermediateWheatgrass.Phenology.CurrentStageName",
+                  "X2FieldName": null,
+                  "Y2FieldName": null,
+                  "ShowInLegend": true,
+                  "IncludeSeriesNameInLegend": false,
+                  "Cumulative": false,
+                  "CumulativeX": false,
+                  "Filter": null,
+                  "Name": "Stage",
                   "ResourceName": null,
                   "Children": [],
                   "Enabled": true,
