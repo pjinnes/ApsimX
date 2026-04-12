@@ -64,6 +64,7 @@ namespace Models.PMF.SimplePlantModels
         private int _DAFStartLinearGrowth = 40;
         private int _DAFEndLinearGrowth = 150;
         private int _DAFMaxSize = 180;
+        private double _NFixationFrac = 0;
 
         ///<summary>Is the tree decidious</summary>
         [Separator("Tree Type")]
@@ -351,6 +352,16 @@ namespace Models.PMF.SimplePlantModels
             set{ _FruitNConc = constrain(value,0.001, 0.1); }
         }
 
+        /// <summary>"N fixation potential of tree (0-0.05 kg N fixed per kg DM fixed)"</summary>
+        [Description("N fixation potential of tree (0-0.05 kg N fixed per kg DM fixed)")]
+        [Bounds(Lower = 0, Upper = 0.05)]
+        [Units("0-1")]
+        public double NFixationFrac
+        {
+            get { return _NFixationFrac; }
+            set { _NFixationFrac = constrain(value, 0, 1); }
+        }
+
         /// <summary>Extinction coefficient (0.1-1)</summary>
         [Separator("Canopy parameters")]
         [Description("Extinction coefficient (0.1-1)")]
@@ -556,9 +567,6 @@ namespace Models.PMF.SimplePlantModels
         [Link]
         private ISummary summary = null;
 
-        [Link(Type = LinkType.Scoped)]
-        private RootNetwork root = null;
-
         [Link(Type = LinkType.Ancestor)]
         private Zone zone = null;
 
@@ -643,7 +651,8 @@ namespace Models.PMF.SimplePlantModels
             {"WaterStressNUptake","[STRUM].Root.Network.NUptakeSWFactor.XYPairs.Y[1] = "},
             {"PotentialFWPerFruit","[STRUM].Fruit.PotentialFWPerFruit.FixedValue = " },
             {"RowWidth","[STRUM].RowWidth.FixedValue = " },
-            {"InterRowSpacing","[STRUM].InterRowSpacing.FixedValue = " }
+            {"InterRowSpacing","[STRUM].InterRowSpacing.FixedValue = " },
+            {"NFixationFrac","[STRUM].Nodule.Nitrogen.SupplyFunctions.Fixation.MaximumFixation.FixedValue = "}
         };
 
 
@@ -678,19 +687,11 @@ namespace Models.PMF.SimplePlantModels
             double rootDepth = Math.Min(MaxRD, soilDepthMax);
             if (GRINZ)
             {  //Must add root zone prior to sowing the crop.  For some reason they (silently) dont add if you try to do so after the crop is established
-                string neighbour = "";
                 List<Zone> zones = Structure.FindChildren<Zone>(relativeTo: simulation).ToList();
                 if (zones.Count > 2)
                     throw new Exception("Strip crop logic only set up for 2 zones, your simulation has more than this");
                 if (zones.Count > 1)
                 {
-                    foreach (Zone z in zones)
-                    {
-                        if (z.Name != zone.Name)
-                            neighbour = z.Name;
-                    }
-                    root.ZoneNamesToGrowRootsIn.Add(neighbour);
-                    //root.ZoneRootDepths.Add(rootDepth);
                     NutrientPoolFunctions InitialDM = new NutrientPoolFunctions();
                     Constant InitStruct = new Constant();
                     InitStruct.FixedValue = 10;
@@ -701,14 +702,25 @@ namespace Models.PMF.SimplePlantModels
                     Constant InitStor = new Constant();
                     InitStor.FixedValue = 0;
                     InitialDM.Storage = InitStor;
-                    //root.ZoneInitialDM.Add(InitialDM);
+                }
+            }
+            else
+            {
+                List<Zone> zones = Structure.FindAll<Zone>(relativeTo: simulation).ToList();
+                foreach (Zone z in zones)
+                {
+                    if (z.Name != zone.Name)
+                    {
+                        //This is the neighbour zone for the plant and roots are not growing into it so set to false
+                        strum.ZonesToGrowRootsIn[z.Name] = false;
+                    }
                 }
             }
 
             string cropName = this.Name;
             double depth = Math.Min(this.MaxRD * this.AgeAtSimulationStart / this.YearsToMaxDimension, rootDepth);
-            double population = 1.0;
-            double rowWidth = 0.0;
+            double population = TreePopulation;
+            double rowWidth = RowSpacing;
 
             tree = CoeffCalc();
             strum.AddCultivar(tree);
@@ -788,6 +800,7 @@ namespace Models.PMF.SimplePlantModels
             treeParams["DAFEndLinearGrowth"] +=  DAFEndLinearGrowth.ToString();
             treeParams["DAFMaxSize"] += DAFMaxSize.ToString();
             treeParams["PotentialFWPerFruit"] += PotentialFWPerFruit.ToString();
+            treeParams["NFixationFrac"] += NFixationFrac.ToString();
 
 
             if (hasAlleyZone)
