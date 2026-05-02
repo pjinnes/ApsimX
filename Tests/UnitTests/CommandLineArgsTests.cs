@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace UnitTests
 {
@@ -83,7 +84,7 @@ Simulation,1,20.000,1,Current,10,Zone
             string[] changes = new string[]
             {
                 "[Clock].StartDate = 2019-1-20",
-                ".Simulations.Sim1.Clock.EndDate = 3/20/2019",
+                ".Simulations.Sim1.Clock.EndDate = 2019-03-20",
                 ".Simulations.Sim2.Enabled = false",
                 ".Simulations.Sim1.Field.Soil.Physical.Thickness[1] = 500",
                 ".Simulations.Sim1.Field.Soil.Physical.Thickness[2] = 2500",
@@ -114,8 +115,8 @@ Simulation,1,20.000,1,Current,10,Zone
             Assert.That(physical.Thickness[1], Is.EqualTo(150));
 
             // Run Models.exe with /Edit command.
-            var overrides = Overrides.ParseStrings(File.ReadAllLines(configFileName));
-            Overrides.Apply(sims, overrides);
+            var overrides = CommandLanguage.StringToCommands(File.ReadAllLines(configFileName), sims, relativeToDirectory:null);
+            CommandProcessor.Run(overrides, sims, runner: null);
 
             // Get references to the changed models.
             clock = sims.Node.Find<Clock>();
@@ -136,9 +137,9 @@ Simulation,1,20.000,1,Current,10,Zone
             Assert.That(clock.EndDate.Year, Is.EqualTo(end.Year));
             Assert.That(clock.EndDate.DayOfYear, Is.EqualTo(end.DayOfYear));
 
-            // Clock 2 should have been changed as well.
-            Assert.That(clock2.StartDate.Year, Is.EqualTo(start.Year));
-            Assert.That(clock2.StartDate.DayOfYear, Is.EqualTo(start.DayOfYear));
+            // Clock 2 should NOT have been changed.
+            Assert.That(clock2.StartDate.Year, Is.EqualTo(2003));
+            Assert.That(clock2.StartDate.DayOfYear, Is.EqualTo(319));
             Assert.That(clock2.EndDate.Year, Is.EqualTo(2003));
             Assert.That(clock2.EndDate.DayOfYear, Is.EqualTo(319));
 
@@ -1303,6 +1304,36 @@ save test.apsimx";
             Clock clockNodeAfterChange = sim2.Node.Find<Clock>();
             Assert.That(clockNodeAfterChange.Start, Is.EqualTo(new DateTime(2017, 2, 1)));
         }
+
+        /// <summary>
+        /// Test to make sure that when running a batch file with the apply 
+        /// switch, if one of the rows has an error, 
+        /// the other rows will still run and produce output files.
+        /// </summary>
+        [Test]
+        public static void TestBatch_Continues_OnError()
+        {
+            string batchFilePath = Path.Combine(Path.GetTempPath(), "batch.csv");
+            string commandFilePath = Path.Combine(Path.GetTempPath(), "commands.txt");
+            string testSimFilePath = Path.Combine(Path.GetTempPath(), "test.apsimx");
+            string weatherFilePath = Path.Combine(Path.GetTempPath(), "AU_Dalby.met");
+            string batchFileContent = 
+                "Date,\n" +
+                "djnejfnjkenfkjenfj,\n" +
+                "1900-01-02,\n";
+            string commandFileContent = 
+                $"load test.apsimx\n" +
+                $"[Clock].StartDate=$Date\n" +
+                $"save test_$Date.apsimx\n" +
+                $"run";
+            File.WriteAllText(batchFilePath, batchFileContent);
+            File.WriteAllText(commandFilePath, commandFileContent);
+            File.WriteAllText(testSimFilePath, ReflectionUtilities.GetResourceAsString("UnitTests.Resources.BatchTestResources.test.apsimx"));
+            File.WriteAllText(weatherFilePath, ReflectionUtilities.GetResourceAsString("UnitTests.Resources.BatchTestResources.AU_Dalby.met"));
+            Assert.Throws<Exception>(() => Utilities.RunModels($"--apply {commandFilePath} --batch {batchFilePath}"));
+            Assert.That(File.Exists(Path.Combine(Path.GetTempPath(), "test_1900-01-02.apsimx")), Is.True);
+        }
+
 
 
     }
