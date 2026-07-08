@@ -34,7 +34,7 @@ namespace Models.PMF.Phen
         public IFunction thermalTime = null;
 
         [Link(IsOptional = true)]
-        private ZadokPMFWheat zadok = null; // This is here so that manager scripts can access it easily.
+        private Zadok zadok = null; // This is here so that manager scripts can access it easily.
 
         [Link(Type = LinkType.Child, ByName = true, IsOptional = true)]
         private Age age = null;
@@ -593,31 +593,6 @@ namespace Models.PMF.Phen
             return proceedToNextPhase;
         }
 
-        /// <summary>
-        /// Returns a DataTable with each Phase listed
-        /// </summary>
-        public DataTable GetPhaseTable()
-        {
-            DataTable phaseTable = new DataTable();
-            phaseTable.Columns.Add("Phase Number", typeof(int));
-            phaseTable.Columns.Add("Phase Name", typeof(string));
-            phaseTable.Columns.Add("Initial Stage", typeof(string));
-            phaseTable.Columns.Add("Final Stage", typeof(string));
-
-            int n = 1;
-            foreach (IPhase child in Structure.FindChildren<IPhase>())
-            {
-                DataRow row = phaseTable.NewRow();
-                row[0] = n;
-                row[1] = child.Name;
-                row[2] = (child as IPhase).Start;
-                row[3] = (child as IPhase).End;
-                phaseTable.Rows.Add(row);
-                n++;
-            }
-            return phaseTable;
-        }
-
         /// <summary>Called when [simulation commencing].</summary>
         [EventSubscribe("Commencing")]
         private void OnCommencing(object sender, EventArgs e)
@@ -700,7 +675,10 @@ namespace Models.PMF.Phen
         [EventSubscribe("Harvesting")]
         private void OnHarvesting(object sender, EventArgs e)
         {
-            SetToEndStage();
+            if (PlantIsAlive)
+            {
+                SetToEndStage();
+            }
         }
 
         /// <summary>Called when crop is ending</summary>
